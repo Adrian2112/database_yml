@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+require 'database_yml'
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: database_yml [options]"
+
+  opts.on("-d database", "--database database", DatabaseYML::DRIVERS.join(", ")) do |v|
+    options[:database] = v
+  end
+
+end.parse!
+
+DatabaseYML.new(options[:database]).create!
