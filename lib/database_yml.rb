@@ -3,6 +3,7 @@
 
 require 'pathname'
 require 'fileutils'
+require 'etc'
 
 class DatabaseYML
   SCRIPT_RAILS = File.join('script', 'rails')
@@ -44,7 +45,17 @@ class DatabaseYML
   end
 
   def generate_database_yml!
-    FileUtils.cp(File.join(TEMPLATES_DIR, @database), File.join(Dir.pwd, "config", "database.yml"))
+    template = File.open(File.join(TEMPLATES_DIR, @database)).read
+    output_file = File.new(File.join(Dir.pwd, "config", "database.yml"), "w")
+
+    username = Etc.getlogin
+    application_name = File.basename(Dir.getwd)
+
+    template.gsub!("USERNAME", username)
+    template.gsub!("APPLICATION_NAME", application_name)
+
+    output_file.write(template)
+
     puts "database.yml created for #{@database}"
   end
 
